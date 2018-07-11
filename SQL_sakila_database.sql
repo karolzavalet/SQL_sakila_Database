@@ -160,5 +160,78 @@ ORDER BY last_name, first_name;
 -- As an unintended consequence, films starting with the letters `K` and `Q` 
 -- have also soared in popularity. Use subqueries to display the titles of movies 
 -- starting with the letters `K` and `Q` whose language is English.
+SELECT title
+FROM film
+WHERE title LIKE "K%" OR title LIKE "Q%" AND 
+language_id IN
+(
+	SELECT language_id
+    FROM language
+    WHERE name="English"
+);
+
+
+-- 7b. Use subqueries to display all actors who appear in the film `Alone Trip`
+SELECT actor_id, first_name, last_name
+FROM actor
+WHERE actor_id IN
+(
+	SELECT actor_id
+	FROM film_actor
+	WHERE film_id IN 
+	(
+		SELECT film_id
+		FROM film
+		WHERE title="Alone Trip"
+	)
+);
+
+
+-- 7c. You want to run an email marketing campaign in Canada, 
+-- for which you will need the names and email addresses of all Canadian customers. 
+-- Use joins to retrieve this information.
+SELECT customer.first_name, customer.last_name, customer.email
+FROM customer
+JOIN address ON customer.address_id=address.address_id
+JOIN city ON city.city_id=address.city_id
+JOIN country ON country.country_id=city.city_id
+WHERE country.country="Canada";
+
+-- Optional solution
+SELECT email
+FROM customer
+WHERE address_id IN
+(
+	SELECT address_id
+	FROM address
+	WHERE city_id IN
+	(
+		SELECT city_id
+		FROM city
+		WHERE country_id=20
+	)
+);
+
+
+-- 7d. Sales have been lagging among young families, 
+-- and you wish to target all family movies for a promotion. 
+-- Identify all movies categorized as famiy films.
+SELECT film_id, title
+FROM film
+WHERE film_id IN
+(
+	SELECT film_id
+	FROM film_category
+	WHERE category_id IN
+	(
+		SELECT category_id
+		FROM category
+		WHERE name="Family"
+	)
+);
+
+
+
+
 
 
